@@ -1,0 +1,37 @@
+{% extends "bla/base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}new event{% endblock %}
+
+
+{% block header %}
+  <h1>Create Event</h1>
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="form-group">
+
+
+    <form method="POST" class="post-form" action="/bla/events/new" style="position:relative;">
+        {% csrf_token %}
+        {% render_field form.name placeholder="Event Title.." class+="form-control" %}
+        {% render_field form.date placeholder="2018-12-24" class+="datetime-input form-control" %}
+        <button type="submit" class="save btn btn-primary">Create</button>
+        <button type="cancel" class="save btn btn-default">Cancel</button>
+    </form>
+
+    {{ form_errors }}
+    </div>
+
+  <script>
+    $(function () {
+        $('.datetime-input').datetimepicker({
+            format:'YYYY-MM-DD'
+        });
+    });
+    </script>
+
+{% endblock %}
+

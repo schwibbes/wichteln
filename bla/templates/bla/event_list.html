@@ -1,0 +1,20 @@
+{% extends "bla/base.html" %}
+
+{% block title %}All Events{% endblock %}
+
+{% block content %}
+
+  <p>
+    <a href="{% url 'event_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus">new event</span></a>
+  </p>
+    {% if event_list %}
+      <ul>
+        {% for w in event_list %}
+        <li><a href="/bla/events/{{ w.id }}/">{{ w.name }}</a></li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>no data</p>
+    {% endif %}
+
+{% endblock %}

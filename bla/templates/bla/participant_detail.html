@@ -1,0 +1,27 @@
+{% extends "bla/base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}{{ participant.name }}{% endblock %}
+
+
+{% block header %}
+  <h1>{{ participant.name }}</h1>
+  <a href="{% url 'event_detail' participant.event.id %}">back to event</a>
+{% endblock %}
+
+
+{% block content %}
+
+{% if is_authenticated %}
+    <p>your present goes to: {{ participant.assignedTo.name }}</p>
+{% else %}
+    <p>please enter your authentication code:</p>
+    <form method="POST" class="post-form form-inline" action="/bla/users/{{ participant.id }}">
+      {% csrf_token %}
+      {% render_field form.auth_code placeholder="PIN" autofocus="" class+="form-control" %}
+      <button type="submit" class="btn save btn-primary">Submit</button>
+    </form>
+    {{ form_errors }}
+{% endif %}
+
+{% endblock %}
