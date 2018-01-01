@@ -2,11 +2,21 @@
 
 {% block title %}All Events{% endblock %}
 
+{% block card_header %}
+  <h1>Laufende Events</h1>
+{% endblock %}
+
+{% block card_content %}
+  <p class="card-text">Hier siehst Du alle laufenden Events. Du kannst auch ein neues Event anlegen.</p>
+  <form method="GET" class="post-form form-inline" action="{% url 'event_new' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary">Event anlegen</button>
+  </form>
+
+{% endblock %}
+
 {% block content %}
 
-  <p>
-    <a href="{% url 'event_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus">new event</span></a>
-  </p>
     {% if event_list %}
       <ul>
         {% for w in event_list %}

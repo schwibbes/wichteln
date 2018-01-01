@@ -4,24 +4,40 @@
 {% block title %}{{ participant.name }}{% endblock %}
 
 
-{% block header %}
-  <h1>{{ participant.name }}</h1>
-  <a href="{% url 'event_detail' participant.event.id %}">back to event</a>
+{% block card_header %}
+  <h1>{{ participant.event.name }}: {{ participant.name }}</h1>
+{% endblock %}
+
+{% block card_content %}
+  <h4>Deinen Wichtel finden</h4>
+  <p class="card-text">Hier kannst Du sehen, welcher Wichtel ein Geschenk von Dir bekommt.</p>
+{% endblock %}
+
+{% block card_footer %}
+<div class="card-footer text-muted">
+  <a href="{% url 'event_detail' participant.event.id %}">zurück zum Event</a>
+</div>
 {% endblock %}
 
 
-{% block content %}
 
-{% if is_authenticated %}
-    <p>your present goes to: {{ participant.assignedTo.name }}</p>
-{% else %}
-    <p>please enter your authentication code:</p>
+{% block content %}
+  {% if is_authenticated %}
+    <p>Dein Geschenk geht an: <b>{{ participant.assignedTo.name }}</b></p>
+    <p>Hast Du schon eine Idee?</p>
+  {% else %}
+    {% if not try_auth %}
+      <p>Bitte gib zur Authentifizierung Deine PIN ein:</p>
+    {% else %}
+      <p>Deine PIN war nicht korrekt. Bitte versuche es erneut:</p>
+    {% endif %}
+
     <form method="POST" class="post-form form-inline" action="/bla/users/{{ participant.id }}">
       {% csrf_token %}
       {% render_field form.auth_code placeholder="PIN" autofocus="" class+="form-control" %}
       <button type="submit" class="btn save btn-primary">Submit</button>
     </form>
     {{ form_errors }}
-{% endif %}
+  {% endif %}
 
 {% endblock %}

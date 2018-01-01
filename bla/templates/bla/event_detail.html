@@ -4,70 +4,84 @@
 {% block title %}{{ event.name }}{% endblock %}
 
 
-{% block header %}
-  <h1>{{ event.name }}</h1>
-  {% if is_complete%}
-    <p>status: completed</p>
-  {% else %}
-    <p>status: running<span class="glyphicon glyphicon-print"></span></p>
-  {% endif %}
+{% block card_header %}
+  <h3>{{ event.name }}</h3>
+{% endblock %}
 
+
+{% block card_content %}
   {% if is_admin%}
+  <div class="admin-panel">
+    <h4 class="card-title">Du bist der Event-Admin</h4>
+    <p class="card-text">Sobald sich alle Teilnehmer eingetragen haben, kannst Du das Event abschlißen und damit die Zuordnung zwischen den Teilnehmern generieren lassen.</p>
+    <p class="card-text">Um Teilnehmer einzuladen, schicke Ihnen einfach folgenden Link: <a href="/bla/events/{{ event.id }}">Teilnehmer-Link</a></p>
+    <p class="card-text">Zugang zum Admin-Bereich dieses Events hat jeder, der folgenden Link hat. Beachte das, wenn Du den Link weitergibst. <a href="/bla/events/{{ event.id }}/?creator_uuid={{ event.creator_uuid }}">Admin-Link</a></p>
     {% if can_complete %}
       <form method="POST" class="post-form form-inline" action="/bla/events/{{ event.id }}/complete">
         {% csrf_token %}
-        <button type="submit" class="btn save btn-primary">Mark Complete</button>
+        <button type="submit" class="btn btn-primary">Wichtel verteilen</button>
       </form>
     {% endif %}
     {% if is_complete %}
       <form method="POST" class="post-form form-inline" action="/bla/events/{{ event.id }}/clear">
         {% csrf_token %}
-        <button type="submit">Clear Assignment</button>
+        <button type="submit" class="btn btn-primary">Wichtel zurücksetzen</button>
       </form>
     {% endif %}
-    <div class="well" style="margin-top: 1em">
-      <a href="/bla/events/{{ event.id }}/?creator_uuid={{ event.creator_uuid }}">admin-url</a>
-      <span style="font-style: italic"><- bookmark this to edit your event. Don't share this link!</span>
-    </div>
+  </div>
+  {% else %}
+  <div class="admin-panel">
+    <h4 class="card-title">Willkommen</h4>
+    <p class="card-text">Bitte trag Dich in die Liste ein, wenn Du teilnehmen willst.</p>
+  </div>
   {% endif %}
+
 {% endblock %}
 
 
+{% block card_footer %}
+<div class="card-footer text-muted">
+
+ {% if is_complete%}
+    <span class="status-msg">status: completed</span>
+  {% else %}
+    <span class="status-msg">status: running</span>
+  {% endif %}
+  <span>| scheduled at: {{ event.date }}</span>
+</div>
+
+{% endblock %}
+
 
 {% block content %}
-  <ul>
-    {% for p in participants %}
-      <li><a href="/bla/users/{{ p.id }}/">{{ p.name }}</a></li>
-    {% endfor %}
 
-    {% if can_add_participant %}
-      <li>
-        <input type="text" name="username" id="new_part_name" >
-        <button id="new_part_button" type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal">add..</button>
-      </li>
+    <div class="row">
+      <h4>Teilnehmer</h4>
+    </div>
+    <div class="row">
+      <ul style="width: 100%; list-style: none">
 
-      <script type="text/javascript">
-        $("#new_part_name").on("keyup paste", function() {
-          $("#id_name").val($(this).val());
-        });
+        {% if not participants %}
+          <li>bisher hat sich niemand angemeldet.</li>
+        {% endif %}
 
-        $("#new_part_name").on("keyup", function(e) {
-          if(e.keyCode==13) $('#new_part_button').click();
-        });
+        {% for p in participants %}
+          <li><a href="/bla/users/{{ p.id }}/">{{ p.name }}</a></li>
+        {% endfor %}
 
-        $("#new_part_button").on("click", function() {
-          setTimeout(function() {
-            $("#id_name").val($("#new_part_name").val());
-            $("#id_email").focus();
-          }, 1000);
-        });
+        {% if can_add_participant %}
+          <li style="margin-top: 1em">Du willst teilnehmen? Trag einfach Deinen Namen ein!</li>
+          <li style="width: 100%">
+            <input type="text" name="username" id="new_part_name" style="width:80%">
+            <button id="new_part_button" type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#newPartDialog" style="float: right;">add..</button>
+          </li>
+        {% else %}
+          <li>Die Teilname ist aktuell nicht möglich. Wenn Du damit nicht einverstanden bist, wende Dich an den Event-Admin.</li>
+        {% endif %}
+      </ul>
+    </div>
 
-      </script>
-    {% endif %}
-  </ul>
-
-
-  <div id="myModal" class="modal fade" role="dialog">
+  <div id="newPartDialog" class="modal fade" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
 
@@ -96,4 +110,24 @@
       </div>
     </div>
   </div>
+{% endblock %}
+
+{% block js %}
+  <script type="text/javascript">
+    $("#new_part_name").on("keyup paste", function() {
+      $("#id_name").val($(this).val());
+    });
+
+    $("#new_part_name").on("keyup", function(e) {
+      if(e.keyCode==13) $('#new_part_button').click();
+    });
+
+    $("#new_part_button").on("click", function() {
+      setTimeout(function() {
+        $("#id_name").val($("#new_part_name").val());
+        $("#id_email").focus();
+      }, 1000);
+    });
+
+  </script>
 {% endblock %}

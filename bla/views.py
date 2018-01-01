@@ -75,12 +75,14 @@ def participant_detail(request, id):
         context['try_auth'] = True
         if form.is_valid():
             context['is_authenticated'] = form.cleaned_data['auth_code'] == _participant.code
+            context['try_auth'] = True
         else:
             context['form_error'] = form.errors
-        return render(request, 'bla/participant_detail.html', context)
     else:
         form = AuthCodeForm()
         context['form'] = form
         context['is_authenticated'] = False
-        return render(request, 'bla/participant_detail.html', context)
+        context['try_auth'] = False
+
+    return render(request, 'bla/participant_detail.html', context)
 
