@@ -1,9 +1,9 @@
-{% extends "bla/base.html" %}
+{% extends "wichtel_app/base.html" %}
 
 {% block title %}All Events{% endblock %}
 
 {% block card_header %}
-  <h1>Laufende Events</h1>
+  <h1>Wichteln</h1>
 {% endblock %}
 
 {% block card_content %}
@@ -12,19 +12,22 @@
     {% csrf_token %}
     <button type="submit" class="btn btn-primary">Event anlegen</button>
   </form>
-
 {% endblock %}
 
 {% block content %}
-
-    {% if event_list %}
-      <ul>
-        {% for w in event_list %}
-        <li><a href="/bla/events/{{ w.id }}/">{{ w.name }}</a></li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p>no data</p>
-    {% endif %}
+    <div class="col"></div>
+    <div class="col-10">
+  <h4>Laufende Events</h4>
+  {% if event_list %}
+    <ul class="list-group">
+      {% for e in event_list %}
+      <li class="list-group-item"><a href="{% url 'event_detail' e.id %}">{{ e.name }}</a></li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>no data</p>
+  {% endif %}
+  </div>
+  <div class="col"></div>
 
 {% endblock %}

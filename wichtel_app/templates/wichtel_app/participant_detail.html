@@ -1,4 +1,4 @@
-{% extends "bla/base.html" %}
+{% extends "wichtel_app/base.html" %}
 {% load widget_tweaks %}
 
 {% block title %}{{ participant.name }}{% endblock %}
@@ -22,7 +22,11 @@
 
 
 {% block content %}
-  {% if is_authenticated %}
+<div class="col"></div>
+<div class="col-10">
+  {% if not is_complete %}
+    <p>Das Event läuft noch...<br>Wenn es abgeschlossen ist, siehst Du hier wen Du gezogen hast;)</p>
+  {% elif is_authenticated %}
     <p>Dein Geschenk geht an: <b>{{ participant.assignedTo.name }}</b></p>
     <p>Hast Du schon eine Idee?</p>
   {% else %}
@@ -32,12 +36,14 @@
       <p>Deine PIN war nicht korrekt. Bitte versuche es erneut:</p>
     {% endif %}
 
-    <form method="POST" class="post-form form-inline" action="/bla/users/{{ participant.id }}">
+    <form method="POST" class="post-form form-inline" action="{% url 'participant_detail' participant.id %}">
       {% csrf_token %}
       {% render_field form.auth_code placeholder="PIN" autofocus="" class+="form-control" %}
       <button type="submit" class="btn save btn-primary">Submit</button>
     </form>
     {{ form_errors }}
   {% endif %}
+</div>
+<div class="col"></div>
 
 {% endblock %}

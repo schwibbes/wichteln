@@ -1,0 +1,153 @@
+{% extends "wichtel_app/base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}{{ event.name }}{% endblock %}
+
+
+{% block card_header %}
+  <h3>{{ event.name }}</h3>
+{% endblock %}
+
+
+{% block card_content %}
+
+<div class="container">
+  <div class="row" style="margin-top: 2em">
+    {% if is_admin%}
+    <div class="col-md-6">
+    {% else %}
+    <div class="col-md-12">
+    {% endif %}
+      <h4 class="card-title">Willkommen</h4>
+      <p class="card-text">Bitte trag Dich unten in die Liste ein, wenn Du teilnehmen willst.</p>
+      <p class="card-text" style="white-space: pre-wrap;">{{ event.description }}</p>
+    </div>
+
+    {% if is_admin%}
+      <div class="col-md-6">
+        <div class="admin-panel hidden-md-up"></div>
+        <h4 class="card-title"><span style="font-size: small">pssst</span> {{ event.admin }},</h4>
+        <p class="card-text">Du bist der <b>Organisator</b>. Sobald sich alle Teilnehmer eingetragen haben, kannst Du über den Button unten das Event abschließen und die Wichtel automatisch auslosen lassen.</p>
+        <p class="card-text">Um Teilnehmer einzuladen, schicke Ihnen einfach folgenden Link: <a href="{% url 'event_detail' event.id %}?creator_uuid=0000">Teilnehmer-Link</a></p>
+        <p class="card-text">Zugang zum diesem Admin-Bereich hat jeder, der folgenden Link hat. Pass also auf, mit wem Du ihn teilst. <a href="{% url 'event_detail' event.id %}?creator_uuid={{ event.creator_uuid }}">Admin-Link</a></p>
+        {% if can_complete %}
+          <form method="POST" class="post-form form-inline" action="{% url 'event_detail' event.id %}/complete">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Wichtel verteilen</button>
+          </form>
+        {% elif is_complete %}
+          <form method="POST" class="post-form form-inline" action="{% url 'event_detail' event.id %}/clear">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Wichtel zurücksetzen</button>
+          </form>
+        {% else %}
+          <form method="POST" class="post-form form-inline" action="{% url 'event_detail' event.id %}/complete">
+            {% csrf_token %}
+            <button type="submit" disabled class="btn btn-default">Wichtel verteilen</button>
+            <span class="label label-default">Zum abschließen müssen sich mindestens zwei Wichtel anmelden</span>
+          </form>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+
+{% block card_footer %}
+  <div class="card-footer text-muted">
+   {% if is_complete%}
+      <span class="status-msg">Die Wichtel sind ausgelost</span>
+    {% else %}
+      <span class="status-msg">Status: Die Anmeldung läuft...</span>
+    {% endif %}
+    <span>| die Geschenke gibt's am: {{ event.date }}</span>
+    <a href="{% url 'event_list' %}" style="float: right;">Zurück zur Übersicht</a>
+  </div>
+{% endblock %}
+
+
+{% block content %}
+<div class="col"></div>
+<div class="col-10">
+
+  <h4>Angemeldete Teilnehmer</h4>
+
+      <ul class="list-group">
+      {% if not participants %}
+        <li class="list-group-item"><i>bisher hat sich niemand angemeldet.</i></li>
+      {% endif %}
+
+      {% for p in participants %}
+        <li class="list-group-item"><a href="{% url 'participant_detail' p.id%}">{{ p.name }}</a></li>
+      {% endfor %}
+
+      {% if can_add_participant %}
+        <li class="list-group-item">
+          <div class="container">
+            <div class="row"><span>Du willst teilnehmen? Trag einfach Deinen Namen ein!</span></div>
+            <div class="row">
+              <div class="col-10">
+                <input type="text" name="username" id="new_part_name" autofocus="" style="width: 100%">
+              </div>
+              <div class="col-2">
+                <button id="new_part_button" type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#newPartDialog" style="float: right;">Hinzufügen..</button>
+              </div>
+            </div>
+          </div>
+
+        </li>
+      {% else %}
+        <li class="list-group-item">Die Wichtel wurden bereits ausgelost. Wenn Du noch mitmachen willst, wende Dich an den&nbsp;<b>Organisator: {{ event.admin }}</b></li>
+      {% endif %}
+    </ul>
+    </div>
+  <div class="col"></div>
+{% endblock %}
+
+{% block dialogs %}
+  <div id="newPartDialog" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">ich will teilnehmen</h4>
+        </div>
+
+        <form method="POST" class="post-form">
+          {% csrf_token %}
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="id_name" >Dein Name</label>
+              {% render_field form.name placeholder="Name" class+="form-control" %}
+            </div>
+            <div class="form-group">
+              <label for="id_auth_code" >Wähle eine PIN</label>
+              {% render_field form.auth_code placeholder="PIN" class+="form-control" %}
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="submit" class="save btn btn-primary">Hinzufügen</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+  <script type="text/javascript">
+    $("#new_part_name").on("keyup", function(e) {
+      if(e.keyCode==13) $('#new_part_button').click();
+    });
+
+    $('#newPartDialog').on('shown.bs.modal', function() {
+        $("#id_name").val($("#new_part_name").val());
+        $("#id_auth_code").focus();
+    })
+  </script>
+{% endblock %}

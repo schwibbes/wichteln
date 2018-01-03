@@ -1,0 +1,59 @@
+{% extends "wichtel_app/base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}new event{% endblock %}
+
+
+{% block card_header %}
+  <h4>Dein Event anlegen</h4>
+{% endblock %}
+
+{% block card_content %}
+    <h4></h4>
+    <p class="card-text">Bitte wähle einen Titel und ein Datum für dein neues Event</p>
+{% endblock %}
+
+{% block card_footer %}
+    <div class="card-footer text-muted">
+      <a href="{% url 'event_list' %}" style="float: right;">Zurück zur Übersicht</a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="col"></div>
+    <div class="col-6">
+    <form method="POST" class="post-form" action="{% url 'event_new' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Wie heißt Du?</label>
+            {% render_field form.admin_name placeholder="Dein Name" class+="form-control" autofocus="" %}
+        </div>
+        <div class="form-group">
+            <label>Wie soll Dein Event heißen?</label>
+            {% render_field form.name placeholder="Name des Events" class+="form-control" %}
+        </div>
+        <div class="form-group">
+        <label>Wann findet es statt?</label>
+        {% render_field form.date placeholder="2018-12-24" class+="datetime-input form-control" %}
+        </div>
+        <div class="form-group">
+            <label>Öffentliche Beschreibung</label>
+            {% render_field form.description placeholder="Dieser Text wird allen Wichteln angezeigt..." class+="form-control" %}
+        </div>
+        <button id="new_event_button" type="submit" class="save btn btn-primary">Anlegen</button>
+    </form>
+    {{ form_errors }}
+    </div>
+    <div class="col"></div>
+
+{% endblock %}
+
+{% block js %}
+<script>
+    $(function () {
+        $('.datetime-input').datetimepicker({
+            format:'YYYY-MM-DD'
+        });
+    });
+</script>
+{% endblock %}
