@@ -5,8 +5,7 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    # path('', views.event_list, name='index'),
-
+    url(r'^$', views.event_list, name='index'),
     url(r'^events/?$', views.event_list, name='event_list'),
     url(r'^events/(?P<id>[0-9]+)/?$', views.event_detail, name='event_detail'),
     url(r'^events/(?P<id>[0-9]+)/complete/?$', views.event_complete, name='event_complete'),
