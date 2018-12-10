@@ -1,13 +1,18 @@
-body {
-    /*
-     background-color: black;
-    */
+
+.header-img {
+    max-width: 100%;
+    overflow: hidden;
 }
 
-.logo {
-    width: 60px;
-    height: 60px;
-    float: left
+.header-text {
+    bottom: 0;
+    position: absolute;
+    background: rgba(39, 29, 26, 0.68);
+    color: white;
+    margin-bottom: 0.4em;
+    padding-left: 1em;
+    padding-right: 1em;
+    max-width: 80%;
 }
 
 #home-button {

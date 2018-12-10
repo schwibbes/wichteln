@@ -26,12 +26,12 @@
   <div class="row" style="margin-top: 2em">
     <div class="col">
       <div class="card">
-        <img class="card-img-top" src="http://via.placeholder.com/350x150" alt="Card image cap">
-        <div class="card-header">
-          {% block card_header %}title{% endblock %}
+        <div class="card-header" style="position: relative">
+          <img class="card-img-top header-img" src="{% static "logo.jpg" %}" alt="logo">
+          <h1 class="header-text">{% block card_header %}{% endblock %}</h1>
         </div>
         <div class="card-block">
-          {% block card_content %}content{% endblock %}
+          {% block card_content %}{% endblock %}
         </div>
           {% block card_footer %}{% endblock %}
       </div>
@@ -40,12 +40,15 @@
   <div class="row" style="margin-top: 2em">
       {% block content %} {% endblock %}
   </div>
-  <div style="height: 200px"></div>
+  <div style="height: 200px; text-align: center">
+    <p><a href="{% url 'impressum' %}">Impressum</a> / <a href="{% url 'privacy' %}">Datenschutz</a> </p>
+  </div>
 </div>
 
   {% block dialogs %} {% endblock %}
 
   {% block js %}{% endblock %}
+
 
 </body>
 </html>

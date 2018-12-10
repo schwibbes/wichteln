@@ -12,4 +12,6 @@ urlpatterns = [
     url(r'^events/(?P<id>[0-9]+)/clear/?$', views.event_clear, name='event_clear'),
     url(r'^events/new/?$', views.event_new, name='event_new'),
     url(r'^users/(?P<id>[0-9]+)/?$', views.participant_detail, name='participant_detail'),
+    url(r'^impressum$', views.impressum, name='impressum'),
+    url(r'^privacy$', views.privacy, name='privacy'),
 ]

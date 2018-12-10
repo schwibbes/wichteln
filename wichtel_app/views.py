@@ -99,3 +99,8 @@ def participant_detail(request, id):
 
     return render(request, 'wichtel_app/participant_detail.html', context)
 
+def impressum(request):
+    return render(request, 'wichtel_app/impressum.html')
+
+def privacy(request):
+    return render(request, 'wichtel_app/privacy.html')
